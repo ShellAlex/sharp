@@ -24,6 +24,13 @@ namespace gittest
            // ll.AddAfter("LiLLo", "test");
             Console.WriteLine($"ll {ll.First.Value}");
             Console.WriteLine($"ll count:: {ll.Count}");
+
+            /*
+             * 
+             * не добавено в гит
+             * еще 
+             *             
+             * */
         }
     }
 }
