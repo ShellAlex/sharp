@@ -4,6 +4,36 @@ using System.Collections.Generic;
 namespace gittest
 {
 
+
+
+    class MainClass
+    {
+
+        public static void Main(string[] args)
+        {
+            HttpListenServer sr = new HttpListenServer();
+            HttpListenServer.StartListen();
+
+
+            TestEmploSort tas = new TestEmploSort();
+            tas.trest();
+            Enumarat nma = new Enumarat();
+            foreach (var s in nma)
+            {
+                Console.WriteLine(s);
+            }
+        }
+    }
+
+    class Enumarat
+    {
+        string[] s = new string[255];
+
+        public IEnumerator<string> GetEnumerator()
+        {
+            yield return "testTwo";
+        }
+    }
     class BubkaSorter
     {
         static public void Sort<T>(IList<T> sortArr, Func<T, T, bool> comparison)
@@ -69,30 +99,5 @@ namespace gittest
             new Emplo("joi",1999),
         };
 
-    }
-
-    class MainClass
-    {
-
-        public static void Main(string[] args)
-        {
-            TestEmploSort tas = new TestEmploSort();
-            tas.trest();
-            Enumarat nma = new Enumarat();
-            foreach (var s in nma)
-            {
-                Console.WriteLine(s);
-            }
-        }
-    }
-
-    class Enumarat
-    {
-        string[] s = new string[255];
-
-        public IEnumerator<string> GetEnumerator()
-        {
-            yield return "testTwo";
-        }
     }
 }
