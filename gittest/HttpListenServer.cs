@@ -26,8 +26,8 @@ namespace gittest
             conf.LoggingRules.Add(new LoggingRule("*", LogLevel.Debug,logFile));
             LogManager.Configuration = conf;
             return log;
-
         }
+
         public static void StartListen()
         {
             using (var web = new HttpListener())
@@ -45,16 +45,33 @@ namespace gittest
                         request.HttpMethod
                             );
 
-
                         string testresp = $"<html>" +
                            $"<body>" +
                             $"<h1>Ответ от недосервера</h1>" +
                             $"</body>" +
                             $"</html>";
+                       
+                        var  xml = getXmlTestStr().InnerXml;
 
-                        XmlText xml = getXmlTestStr();
                         response.AddHeader("Content-type", "text/html;charset=utf8");
-                        byte[] respbyte = Encoding.UTF8.GetBytes(testresp);
+                        Cookie cookie = request.Cookies["test"];
+                       // if (cookie.Value.Length != 0)
+                       if(!String.IsNullOrEmpty(cookie.Value))
+                        {
+                            Console.WriteLine($"COOKA: {cookie.Value}");
+                            //int v = int.Parse(cookie.Value);
+                            int  v; 
+                            if(!int.TryParse(cookie.Value, out v))
+                            {
+                                response.Cookies.Add(new Cookie("test", 22.ToString()));
+                            }
+                            Console.WriteLine($"vPARSA{v}");
+                            response.Cookies.Add(new Cookie("test", (v+=25).ToString()));
+                        }
+
+
+
+                        byte[] respbyte = Encoding.UTF8.GetBytes(xml);
                         response.ContentLength64 = respbyte.Length;
 
                         Stream outStr = response.OutputStream;
@@ -68,33 +85,58 @@ namespace gittest
                 {
                     log.Error(e.Message);
                 }
-
             }
         }
 
-        public static XmlText getXmlTestStr(Stream s)
+        public static XmlDocument getXmlTestStr()
         {
+             Stream s = new MemoryStream();
+           // StringBuilder s = new StringBuilder();
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.OmitXmlDeclaration = true;
+            settings.ConformanceLevel = ConformanceLevel.Fragment;
+           // XmlWriter xml = XmlWriter.Create(s);
+            {
 
-            XmlWriter xml = XmlWriter.Create(s);
-            xml.WriteStartDocument();
-            xml.WriteStartElement("Класс");
+                StringBuilder sb = new StringBuilder();
+                XmlWriter writer = XmlWriter.Create(sb);
 
-            xml.WriteStartElement("ЖЫВОТНОЕ");
-            xml.WriteAttributeString("АЛЕНЬ","рыжий");
-            xml.WriteEndElement();
+                writer.WriteStartDocument();
+                writer.WriteStartElement("People");
 
-            xml.WriteStartElement("ЖЫВОТНОЕ");
-            xml.WriteStartAttribute("кот", "сереньки");
-            xml.WriteValue("сбежавши");
-            xml.WriteEndAttribute();
-            xml.WriteEndElement();
+                writer.WriteStartElement("Person");
+                writer.WriteAttributeString("Name", "Nick");
+                writer.WriteValue("value write");
+                writer.WriteEndElement();
 
-            xml.WriteStartElement("ЖЫВОТНОЕ");
-            xml.WriteAttributeString("сабак", "черны");
-            xml.WriteEndElement();
+                writer.WriteStartElement("Person");
+                writer.WriteStartAttribute("Name");
+                writer.WriteValue("Nick");
+                writer.WriteEndAttribute();
+                writer.WriteEndElement();
 
-            return xml;
+                ///
+                writer.WriteStartElement("Person");
+                writer.WriteAttributeString("Name", "Tom");
+                writer.WriteValue("vvalllue");
+                writer.WriteEndElement();
 
+                writer.WriteStartElement("Person");
+                writer.WriteStartAttribute("Name");
+                writer.WriteValue("Nick");
+                writer.WriteEndAttribute();
+
+                writer.WriteEndElement();
+
+                writer.WriteEndElement();
+                writer.WriteEndDocument();
+
+                writer.Flush();
+
+                XmlDocument xmlDocument = new XmlDocument();
+                xmlDocument.LoadXml(sb.ToString());
+                return xmlDocument;
+            }
         }
     }
 }

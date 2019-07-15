@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Xml;
 
 namespace gittest
 {
@@ -11,9 +12,11 @@ namespace gittest
 
         public static void Main(string[] args)
         {
+          
             HttpListenServer sr = new HttpListenServer();
             HttpListenServer.StartListen();
-
+           // var doc =  sr.getXmlTestStr();
+           // Console.WriteLine(doc.InnerXml);
 
             TestEmploSort tas = new TestEmploSort();
             tas.trest();
